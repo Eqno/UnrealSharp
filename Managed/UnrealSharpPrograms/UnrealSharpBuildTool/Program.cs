@@ -170,9 +170,7 @@ public static class Program
 
     public static string GetVersion()
     {
-        Version currentVersion = Environment.Version;
-        string currentVersionStr = $"{currentVersion.Major}.{currentVersion.Minor}";
-        return "net" + currentVersionStr;
+        return DotNetUtilities.DOTNET_MAJOR_VERSION_DISPLAY;
     }
     
     public static string GetNetStandardVersion()
