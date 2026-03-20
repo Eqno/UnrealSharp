@@ -119,6 +119,18 @@ FString UCSProcUtilities::GetPathToManagedSolution()
 	return SolutionPath;
 }
 
+bool UCSProcUtilities::EnsureManagedSolutionExists()
+{
+	const FString ManagedSolutionPath = FPaths::ConvertRelativePathToFull(GetPathToManagedSolution());
+	if (FPaths::FileExists(ManagedSolutionPath))
+	{
+		return true;
+	}
+
+	UE_LOGFMT(LogUnrealSharpProcHelper, Display, "Managed solution not found at {0}. Regenerating it now.", ManagedSolutionPath);
+	return InvokeUnrealSharpBuildTool(BUILD_ACTION_GENERATE_SOLUTION);
+}
+
 FString& UCSProcUtilities::GetManagedBinaries()
 {
 	static FString ManagedBinaries = FPaths::Combine("Binaries", "Managed", DOTNET_DISPLAY_NAME);
@@ -141,6 +153,11 @@ FString UCSProcUtilities::GetUnrealSharpPluginsPath()
 
 bool UCSProcUtilities::BuildUserSolution()
 {
+	if (!EnsureManagedSolutionExists())
+	{
+		return false;
+	}
+
 	TMap<FString, FString> Arguments;
 	Arguments.Add("OutputPath", GetUserAssemblyDirectory());
 	return InvokeUnrealSharpBuildTool(BUILD_ACTION_BUILD_EMIT_LOAD_ORDER, Arguments);

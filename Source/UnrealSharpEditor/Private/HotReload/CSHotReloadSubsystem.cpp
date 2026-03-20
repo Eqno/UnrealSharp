@@ -34,6 +34,12 @@ void UCSHotReloadSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	FEditorDelegates::ShutdownPIE.AddUObject(this, &UCSHotReloadSubsystem::OnStopPlayingPIE);
 
 	UnrealSharpEditorModule = &FUnrealSharpEditorModule::Get();
+
+	if (!UCSProcUtilities::EnsureManagedSolutionExists())
+	{
+		PauseHotReload(TEXT("Failed to generate managed solution"));
+		return;
+	}
 	
 	FString PathToManagedSolution = UCSProcUtilities::GetPathToManagedSolution();
 	UnrealSharpEditorModule->GetManagedEditorCallbacks().LoadSolutionAsync(*PathToManagedSolution, (void*)&OnHotReloadReady_Callback);

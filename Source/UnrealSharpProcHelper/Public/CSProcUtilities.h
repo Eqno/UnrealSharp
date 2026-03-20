@@ -46,6 +46,8 @@ public:
 		return InvokeDotNetBuild(GetScriptFolderDirectory());
 	}
 	
+	static bool EnsureManagedSolutionExists();
+	
 	static bool BuildUserSolution();
 
 	UFUNCTION(meta = (ScriptMethod))
